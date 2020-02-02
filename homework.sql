@@ -102,3 +102,84 @@ ON city.country_id = country.country_id)
 ON address.city_id = city.city_id)
 ON address.address_id = customer.address_id
 WHERE country = 'Canada';
+
+-- 7 d
+SELECT title 
+FROM film
+WHERE film_id 
+IN (SELECT film_id FROM film_category WHERE category_id 
+IN ( SELECT category_id FROM category WHERE `name` = 'family')
+);
+
+-- 7 e
+SELECT COUNT(film.title) as 'rentals', film.title
+FROM rental
+INNER JOIN 
+(film INNER JOIN inventory
+ON
+inventory.film_id=film.film_id)
+ON 
+inventory.inventory_id=rental.inventory_id
+GROUP BY film.title
+ORDER BY count(film.title) DESC;
+
+-- 7f 
+SELECT * FROM sales_by_store;
+
+-- 7 g
+SELECT store.store_id, city.city, country.country
+FROM store
+INNER JOIN 
+(address INNER JOIN
+(city INNER JOIN country
+ON
+country.country_id=city.country_id)
+ON
+city.city_id = address.city_id)
+ON
+store.address_id=address.address_id;
+
+-- 7 h
+SELECT category.name, sum(payment.amount)
+FROM category
+INNER JOIN 
+(film_category INNER JOIN
+(inventory INNER JOIN
+(rental INNER JOIN payment
+ON
+rental.rental_id = payment.rental_id)
+ON
+inventory.inventory_id=rental.inventory_id)
+ON
+inventory.film_id=film_category.film_id)
+ON
+category.category_id=film_category.category_id
+GROUP BY name
+ORDER BY SUM(amount) DESC
+LIMIT 5;
+
+-- 8 a
+CREATE VIEW top_5__by_genre AS
+SELECT category.name, sum(payment.amount)
+FROM category
+INNER JOIN 
+(film_category INNER JOIN
+(inventory INNER JOIN
+(rental INNER JOIN payment
+ON
+rental.rental_id = payment.rental_id)
+ON
+inventory.inventory_id=rental.inventory_id)
+ON
+inventory.film_id=film_category.film_id)
+ON
+category.category_id=film_category.category_id
+GROUP BY name
+ORDER BY SUM(amount) DESC
+LIMIT 5;
+
+-- 8 b
+SELECT * FROM top_5__by_genre
+
+-- 8 c 
+DROP VIEW top_5__by_genre
