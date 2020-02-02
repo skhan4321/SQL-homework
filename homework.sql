@@ -50,10 +50,9 @@ FROM address
 INNER JOIN staff 
 ON staff.address_id=address.address_id;
 -- 6B
-SELECT staff.first_name, staff.last_name, SUM(payment.amount) 
-FROM payment 
-INNER JOIN staff ON 
-staff.staff_id=payment.staff_id 
+SELECT sum(payment.amount), staff.staff_id, staff.first_name from payment 
+INNER JOIN staff on staff.staff_id = payment.staff_id
+WHERE payment_date between "2005-08-01" and "2005-08-31"
 GROUP BY staff.staff_id;
 -- 6c
 SELECT film.title, COUNT(film_actor.actor_id) AS ` number of actors` 
